@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="ru">
+<head>
+  <title>Суфлёрство в ЛКШ</title>
+  <meta http-equiv="refresh" content="5" />
+  <script type="text/javascript" src="assist.json"></script>
+  <script type="text/javascript">
+    var r, r1;
+    if (window.XMLHttpRequest) {
+      r = new XMLHttpRequest();
+      r1 = new XMLHttpRequest();
+    } else
+      alert('no ajax :(');
+    var step = -1;
+    r.onload = function() {
+      // alert(r.responseText);
+      var result = JSON.parse(r.responseText);
+      var new_step = result.step;
+      if (step != new_step) {
+        step = new_step;
+        redraw_lines(step);
+      }
+      setTimeout(check, 20);
+    }
+    r.onerror = function( error ) {
+      // alert('error: ' + error);
+    }
+    r1.onload = function() {
+      // alert('ok!');
+    }
+    function check() {
+      try {
+        r.open("GET", "/assist-control?action=step:wait&step=" + step, true);
+        r.send();
+        // alert("sent...");
+      } catch (e) {
+        alert("error while sending: " + e);
+      }
+    }
+    function redraw_lines( skip ) {
+      document.getElementById('step_cnt').innerHTML = '' + skip;
+      for (var i = 0; i != 5; i++) {
+        text = lines[i + skip];
+        document.getElementById('line' + i).innerHTML = text;
+      }
+    }
+    function change( action ) {
+      r1.open("GET", "/assist-control?action=" + action);
+      r1.send();
+      check();
+    }
+    function init() {
+      if (window.location.hash == '#control') {
+        document.getElementById('control').style.display = "inline";
+        for (var i = 0; i != 5; i++) {
+          document.getElementById('line' + i).setAttribute('class', 'line_small');
+        }
+      }
+      check();
+      setTimeout(function() { document.reload(); }, 5000 * (1 + Math.random()));
+      // Не работает пока что :(
+      window.onkeypress = function(e) {
+          var e=window.event || e;
+          var keyunicode=e.charCode || e.keyCode;
+          if (keyunicode == 65 || keyunicode == 97) {
+              change('prev');
+          }
+          if (keyunicode == 66 || keyunicode == 98) {
+              change('next');
+          }
+          return (keyunicode>=65 && keyunicode<=122 || keyunicode==8 || keyunicode==32)? true : false
+      }
+    }
+  </script>
+  <style type="text/css">
+    body {
+      background-color: black;
+      color: yellow;
+      text-align: left;
+    }
+    span.line {
+      font-size: 120px;
+      font-family: sans-serif;
+      white-space: nowrap;
+      text-align: center;
+    }
+    span.line_small {
+      font-size: 36px;
+      white-space: nowrap;
+      text-align: center;
+    }
+    td.button {
+      border: solid 5px yellow;
+      width: 48%;
+      cursor: pointer; 
+    }
+  </style>
+</head>
+<body onload="init();">
+  <div>
+    <span id='line0' class='line'></span><br />
+    <span id='line1' class='line'></span><br />
+    <span id='line2' class='line'></span><br />
+    <span id='line3' class='line'></span><br />
+    <span id='line4' class='line'></span><br />
+    <!--<span id='line5' class='line'></span><br />-->
+    <!--<span id='line6' class='line'></span><br />-->
+  </div>
+  <div id='control' style='font-size: 30px; display: none;'>
+    step: <span id='step_cnt'>?</span><br />
+    <table width="100%" style="border: solid 5px yellow; height: 150px;">
+      <tr>
+        <td class="button" onclick="change('prev');">prev</td>
+        <td class="button" onclick="change('next');">next</td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
