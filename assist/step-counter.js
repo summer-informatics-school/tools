@@ -53,6 +53,10 @@ var actions = {
         step--;
         step_update(cont);
     },
+    'set' : function( args, cont ) {
+        step = args['step'];
+        step_update(cont);
+    },
 };
 
 http.createServer(function (req, res) {

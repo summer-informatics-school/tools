@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="ru">
 <head>
   <title>Суфлёрство в ЛКШ</title>
-  <meta http-equiv="refresh" content="5" />
+  <meta http-equiv="refresh" content="10" />
   <script type="text/javascript" src="assist.json"></script>
   <script type="text/javascript">
     var r, r1;
@@ -17,9 +17,10 @@
       // alert(r.responseText);
       var result = JSON.parse(r.responseText);
       var new_step = result.step;
+      console.log ('new step: ' + new_step);
       if (step != new_step) {
         step = new_step;
-        redraw_lines(step);
+        redraw_lines (parseInt (step));
       }
       setTimeout(check, 20);
     }
@@ -50,15 +51,21 @@
       r1.send();
       check();
     }
+    function change_set( action ) {
+      r1.open("GET", "/assist-control?action=set&step=" + document.getElementById('step_value').value);
+      r1.send();
+      check();
+    }
     function init() {
       if (window.location.hash == '#control') {
         document.getElementById('control').style.display = "inline";
         for (var i = 0; i != 5; i++) {
           document.getElementById('line' + i).setAttribute('class', 'line_small');
         }
+      } else {
+        setTimeout(function() { document.reload(); }, 5000 * (1 + Math.random()));
       }
       check();
-      setTimeout(function() { document.reload(); }, 5000 * (1 + Math.random()));
       // Не работает пока что :(
       window.onkeypress = function(e) {
           var e=window.event || e;
@@ -69,7 +76,7 @@
           if (keyunicode == 66 || keyunicode == 98) {
               change('next');
           }
-          return (keyunicode>=65 && keyunicode<=122 || keyunicode==8 || keyunicode==32)? true : false
+          return (keyunicode >= 65 && keyunicode <= 122) || (48 <= keyunicode && keyunicode <= 59) || keyunicode==8 || keyunicode==32;
       }
     }
   </script>
@@ -113,6 +120,9 @@
       <tr>
         <td class="button" onclick="change('prev');">prev</td>
         <td class="button" onclick="change('next');">next</td>
+      </tr>
+      <tr>
+        <td class="button" colspan="2">step:<input type="text" id="step_value" /><input type="submit" onclick="change_set ();"/></td>
       </tr>
     </table>
   </div>
