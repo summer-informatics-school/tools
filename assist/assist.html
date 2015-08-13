@@ -41,6 +41,7 @@
     }
     function redraw_lines( skip ) {
       document.getElementById('step_cnt').innerHTML = '' + skip;
+      document.getElementById('step_total').innerHTML = '' + lines.length;
       for (var i = 0; i != 5; i++) {
         text = lines[i + skip];
         document.getElementById('line' + i).innerHTML = text;
@@ -115,7 +116,7 @@
     <!--<span id='line6' class='line'></span><br />-->
   </div>
   <div id='control' style='font-size: 30px; display: none;'>
-    step: <span id='step_cnt'>?</span><br />
+    step: <span id='step_cnt'>?</span> of <span id='step_total'>?</span><br />
     <table width="100%" style="border: solid 5px yellow; height: 150px;">
       <tr>
         <td class="button" onclick="change('prev');">prev</td>
