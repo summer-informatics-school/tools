@@ -1,0 +1,7 @@
+!#/bin/bash
+
+mkdir -p scp-temp
+rm -rf scp-temp/*
+scp -r ejudge@ejudge.lksh.ru:/var/lib/ejudge/029310/var/archive/runs/0 ./scp-temp/
+ls -la scp-temp/ >> log
+scp ejudge@ejudge.lksh.ru:/var/lib/ejudge/029310/var/status/dir/external.xml ./
